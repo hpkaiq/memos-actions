@@ -83,14 +83,13 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: bash
       run: echo "${{ matrix.cgo_env }}" >> $GITHUB_ENV
+
     - name: Build backend
       run: |
         cd memos
         go build -o memos-${GOOS}-${GOARCH} ./main.go
-
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
         name: memos-binary-${{ matrix.os }}-${{ matrix.goarch }}
         path: memos/memos-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
-
