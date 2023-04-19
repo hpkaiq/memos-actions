@@ -79,7 +79,8 @@ jobs:
     - name: Build backend
       run: |
         cd memos
-        go build -o memos-${GOOS}-${GOARCH} ./main.go
+        go build -o memos-${GOOS}-${GOARCH}${{ matrix.os == 'windows-latest' && '.exe' || '' }} ./main.go
+
 
     - name: Debug - List files in memos directory (macOS and Ubuntu)
       if: matrix.os != 'windows-latest'
@@ -97,5 +98,5 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: memos-binary-${{ matrix.os }}-${{ matrix.goarch }}
-        path: memos/memos-${{ matrix.GOOS }}-${{ matrix.GOARCH }}
+          name: memos-binary-${{ matrix.os }}-${{ matrix.goarch }}
+          path: memos/memos-${{ matrix.GOOS }}-${{ matrix.GOARCH }}${{ matrix.os == 'windows-latest' && '.exe' || '' }}
