@@ -17,10 +17,7 @@ jobs:
             goos: windows
             goarch: amd64
             cgo_env: CC=x86_64-w64-mingw32-gcc
-#           - os: windows-latest
-#             goos: windows
-#             goarch: arm64
-#             cgo_env: CC=aarch64-w64-mingw32-gcc
+
     env:
       GOOS: ${{ matrix.goos }}
       GOARCH: ${{ matrix.goarch }}
@@ -49,7 +46,7 @@ jobs:
         Remove-Item -Path ../server/dist -Recurse -Force
         mv dist ../server/
 
-    - name: Build frontend (non-Windows2)
+    - name: Build frontend (non-Windows)
       if: matrix.os != 'windows-latest'
       run: |
         cd memos/web
@@ -58,7 +55,6 @@ jobs:
         pnpm build
         rm -rf ../server/dist
         mv dist ../server/
-
 
     - name: Setup Go
       uses: actions/setup-go@v2
@@ -82,6 +78,11 @@ jobs:
       run: |
         cd memos
         go build -o memos-${GOOS}-${GOARCH} ./main.go
+
+    - name: Debug - List files in memos directory
+      run: |
+        cd memos
+        ls -al
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
