@@ -82,7 +82,7 @@ jobs:
     - name: Debug - List files in memos directory
       run: |
         cd memos
-        ls -al
+        dir
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
