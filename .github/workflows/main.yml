@@ -17,6 +17,9 @@ jobs:
             goos: windows
             goarch: amd64
             cgo_env: CC=x86_64-w64-mingw32-gcc
+            env:
+              GOOS: windows
+              GOARCH: amd64
 
     env:
       GOOS: ${{ matrix.goos }}
@@ -73,7 +76,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y gcc-aarch64-linux-gnu
         echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
-
     - name: Build backend
       run: |
         cd memos
@@ -91,7 +93,6 @@ jobs:
       run: |
         cd memos
         dir
-
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
