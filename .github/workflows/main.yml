@@ -17,10 +17,10 @@ jobs:
             goos: windows
             goarch: amd64
             cgo_env: CC=x86_64-w64-mingw32-gcc
-          - os: windows-latest
-            goos: windows
-            goarch: arm64
-            cgo_env: CC=aarch64-w64-mingw32-gcc
+#           - os: windows-latest
+#             goos: windows
+#             goarch: arm64
+#             cgo_env: CC=aarch64-w64-mingw32-gcc
     env:
       GOOS: ${{ matrix.goos }}
       GOARCH: ${{ matrix.goarch }}
@@ -49,7 +49,7 @@ jobs:
         Remove-Item -Path ../server/dist -Recurse -Force
         mv dist ../server/
 
-    - name: Build frontend (non-Windows)
+    - name: Build frontend (non-Windows2)
       if: matrix.os != 'windows-latest'
       run: |
         cd memos/web
@@ -59,18 +59,17 @@ jobs:
         rm -rf ../server/dist
         mv dist ../server/
 
-    - name: Setup MSYS2 (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: mingw-w64-x86_64-gcc mingw-w64-i686-gcc mingw-w64-aarch64-gcc
 
     - name: Setup Go
       uses: actions/setup-go@v2
       with:
         go-version: '1.19.3'
+
+    - name: Install mingw-w64 (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install mingw
+        echo ${{ matrix.cgo_env }} >> $GITHUB_ENV
 
     - name: Install gcc-aarch64-linux-gnu (Ubuntu ARM64)
       if: matrix.os == 'ubuntu-latest' && matrix.goarch == 'arm64'
@@ -79,15 +78,11 @@ jobs:
         sudo apt-get install -y gcc-aarch64-linux-gnu
         echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
 
-    - name: Set CC environment variable (Windows)
-      if: matrix.os == 'windows-latest'
-      shell: bash
-      run: echo "${{ matrix.cgo_env }}" >> $GITHUB_ENV
-
     - name: Build backend
       run: |
         cd memos
         go build -o memos-${GOOS}-${GOARCH} ./main.go
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
