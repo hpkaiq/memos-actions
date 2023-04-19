@@ -79,10 +79,19 @@ jobs:
         cd memos
         go build -o memos-${GOOS}-${GOARCH} ./main.go
 
-    - name: Debug - List files in memos directory
+    - name: Debug - List files in memos directory (macOS and Ubuntu)
+      if: matrix.os != 'windows-latest'
+      run: |
+        cd memos
+        ls -al
+
+    - name: Debug - List files in memos directory (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
       run: |
         cd memos
         dir
+
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
